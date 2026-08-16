@@ -1,0 +1,57 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "copolybench"
+version = "0.1.0"
+description = "When does copolymer sequence matter for property prediction? A controlled representation benchmark."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["copolymer", "sequence", "representation", "polymer", "machine-learning"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Chemistry",
+]
+
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "matplotlib>=3.7",
+    # The shared evaluation harness (splits, metrics, featurizers, GBM). Installed
+    # from GitHub because it is not on PyPI; the repo is public so no auth needed.
+    "polytools[gbm] @ git+https://github.com/DrGregPitch/polytools",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "ruff>=0.4",
+]
+
+[project.urls]
+Homepage = "https://github.com/DrGregPitch/copolybench"
+Issues = "https://github.com/DrGregPitch/copolybench/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/copolybench"]
+
+[tool.hatch.metadata]
+allow-direct-references = true      # permit the git+https polytools dependency
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+filterwarnings = ["error::RuntimeWarning"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "C4"]
+ignore = ["E501", "B905", "C408"]
