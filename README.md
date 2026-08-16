@@ -31,6 +31,8 @@ Read the `random` column. The naive composition-weighted encoding is stuck at **
 
 ![Test RMSE per representation and split, with the sequence-blind floor drawn in.](assets/ablation_rmse.png)
 
+> 📄 **The full technical writeup** — the argument, the physics, and the nuances in article form — is in [`docs/writeup.md`](docs/writeup.md).
+
 Two honest nuances the benchmark surfaces, both worth more than the headline number:
 
 - **Sequence statistics alone are not enough.** Strip out monomer identity (`sequence stats only`) and error explodes to 84 °C — you need *composition, sequence, and what the comonomers are*, together.
