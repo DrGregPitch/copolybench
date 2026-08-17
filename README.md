@@ -50,6 +50,12 @@ To measure which representations recover a sequence effect, you need ground trut
 
 Everything about the sequence contribution is therefore known in closed form, which is what lets the benchmark make a *falsifiable* claim about each representation instead of just reporting a number. This is a measurement instrument, labelled as such — **not a Tg dataset**. Swap in real experimental copolymer data through the same record structure when you have it.
 
+### Why not just use real data?
+
+Because the dataset this question needs does not exist openly, and the reason is instructive. To measure sequence blindness you need copolymers where **sequence varies at fixed composition** — the same two comonomers at 50/50, made random *and* alternating *and* blocky, each with a measured property. That is rare, expensive experimental work, and no permissively-licensed dataset contains it. Public copolymer data is either composition-only or, like the block-copolymer databases, all-blocky (a single point on the sequence axis). A controlled oracle is therefore not a shortcut here; it is the only instrument that can isolate the variable in question.
+
+The *machinery* does transfer to real data, and the sibling repos show it doing so: [`polytools`](https://github.com/DrGregPitch/polytools) runs its honest-splits benchmark on 1,077 real homopolymers (RadonPy), and [`formulate`](https://github.com/DrGregPitch/formulate) runs active learning on 6,949 real, composition-dependent polymer-electrolyte formulations (CheMixHub). This repo isolates the one axis — sequence — that real data can't yet vary on demand.
+
 ---
 
 ## The representation ladder
