@@ -38,6 +38,16 @@ Two honest nuances the benchmark surfaces, both worth more than the headline num
 - **Sequence statistics alone are not enough.** Strip out monomer identity (`sequence stats only`) and error explodes to 84 °C — you need *composition, sequence, and what the comonomers are*, together.
 - **The advantage shrinks out of distribution.** On `leave-pair-out` — whole comonomer pairs held out — every representation struggles (38–45 °C), because generalising the *sequence sensitivity* (which depends on the specific comonomer chemistry) to unseen pairs is genuinely hard. Sequence still helps, but the gap over the naive baseline narrows. That is a real limitation, reported, not hidden.
 
+## Run it
+
+```bash
+git clone https://github.com/DrGregPitch/copolybench && cd copolybench
+uv venv && uv pip install -e ".[dev]"      # pulls polytools from GitHub
+uv run python scripts/run_ablation.py --outdir results   # ~1 min: regenerates every number and figure
+```
+
+`uv run pytest tests -v` runs the suite. The sequence/dyad engine (`sequences.py`) and the Johnston Tg oracle (`oracle.py`) are pure, tested, and documented — the physics is the interesting part.
+
 ---
 
 ## Why this is a controlled benchmark, and why that's the point
@@ -66,19 +76,6 @@ The *machinery* does transfer to real data, and the sibling repos show it doing 
 2. **`monomers_composition`** — `[v_A, v_B, f]`. Keeps the comonomers distinct; still composition-only.
 3. **`sequence_stats_only`** — composition + dyad/blockiness/run-length statistics, no monomer identity. A diagnostic.
 4. **`plus_sequence`** — monomers + composition + sequence statistics. The first encoding that can see whether a chain is blocky or alternating.
-
----
-
-## Reproduce it
-
-```bash
-git clone https://github.com/DrGregPitch/copolybench && cd copolybench
-uv venv && uv pip install -e ".[dev]"      # pulls polytools from GitHub
-uv run python scripts/run_ablation.py --outdir results   # ~1 min, regenerates every number and figure
-uv run pytest tests -v
-```
-
-The sequence/dyad engine (`sequences.py`) and the Tg oracle (`oracle.py`) are pure, tested, and documented — read them; the physics is the interesting part.
 
 ---
 
