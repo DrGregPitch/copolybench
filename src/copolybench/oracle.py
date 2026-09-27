@@ -86,6 +86,12 @@ def tg_johnston(
     a, b = tg_a_c + C_TO_K, tg_b_c + C_TO_K
     hm_k = 2.0 * a * b / (a + b)
     tg_ab_k = hm_k * (1.0 + delta)
+    if tg_ab_k <= 0:
+        raise ValueError(
+            f"delta={delta} makes the AB-junction Tg non-positive "
+            f"({tg_ab_k:.1f} K); an absolute temperature must be > 0. "
+            "Keep delta > -1 (physically, well inside (-1, 1))."
+        )
 
     inv = dyads.F_AA / a + dyads.F_AB / tg_ab_k + dyads.F_BB / b
     return 1.0 / inv - C_TO_K

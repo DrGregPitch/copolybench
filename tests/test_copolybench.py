@@ -19,7 +19,7 @@ from copolybench import (
     tg_fox,
     tg_johnston,
 )
-from copolybench.experiment import composition_only_floor, run_ablation
+from copolybench.experiment import run_ablation, sequence_effect_scale
 from copolybench.represent import build_representation
 
 # --------------------------------------------------------------------------
@@ -110,9 +110,9 @@ def test_dataset_shape_and_columns(dataset):
 
 def test_dataset_has_a_real_sequence_signal(dataset):
     """The planted sequence effect must be a meaningful fraction of Tg variance."""
-    floor = composition_only_floor(dataset)
-    assert floor > 10.0                       # sequence matters
-    assert floor < dataset.tg.std()           # but is not the whole story
+    scale = sequence_effect_scale(dataset)
+    assert scale > 10.0                       # sequence matters
+    assert scale < dataset.tg.std()           # but is not the whole story
 
 
 def test_delta_varies_with_pair_chemistry(dataset):

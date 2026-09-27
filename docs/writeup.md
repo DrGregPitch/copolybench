@@ -29,7 +29,7 @@ summed over the nearest-neighbour *dyad* fractions (`F_AA`, `F_AB`, `F_BB`), wit
 
 Every bit of sequence dependence lives in the `F_AB` coefficient. When the AB-junction Tg equals the harmonic mean of the two homopolymer Tgs, that coefficient is *exactly zero* and Johnston collapses onto Fox — sequence stops mattering. A single per-pair parameter, `delta`, sets how far the junction departs from neutral, and it is tied to the comonomers' polarity mismatch: chemically similar comonomers mix near-ideally (`delta ≈ 0`), dissimilar ones have non-ideal junctions (larger `|delta|`). Because `delta` is a function of monomer structure, a model can in principle *learn* it from the comonomers and generalise to pairs it has never seen — which is what makes the out-of-distribution test meaningful rather than hopeless.
 
-The result is a dataset of 5,400 copolymers across 300 comonomer pairs in which the sequence contribution has a standard deviation of about 27 °C — a lower bound, by construction, on the RMSE any composition-only representation can achieve.
+The result is a dataset of 5,400 copolymers across 300 comonomer pairs in which the sequence contribution has a standard deviation of about 27 °C — the scale of what sequence contributes, and the yardstick every representation gets measured against. (It is a yardstick rather than a strict floor: because each pair's sequence *sensitivity* is learnable from monomer structure, a composition-only model that knows the monomers can anticipate part of the average effect — what it can never do is resolve which sequence a given sample has.)
 
 ## The experiment
 
@@ -44,7 +44,7 @@ Four representations, one gradient-boosting model, two splits. The representatio
 
 *Test RMSE, °C.*
 
-The random column is the headline. The naive composition-weighted encoding is pinned at 25.3 °C — essentially the 27 °C sequence-blind floor. It has hit a wall that is not about model capacity or data volume; it is about information the representation never contained. Adding first-order sequence statistics drops RMSE to 9.4 °C, a 60 % reduction, down toward the label-noise floor.
+The random column is the headline. The naive composition-weighted encoding leaves 25.3 °C of error — essentially the full 27 °C scale of the planted sequence effect, meaning it resolves almost none of what sequence contributes. That is not about model capacity or data volume; it is about information the representation never contained. Adding first-order sequence statistics drops RMSE to 9.4 °C, a 60 % reduction, down toward the label-noise floor.
 
 The single most convincing picture is not the table but a slice through it. Fix a sequence-sensitive comonomer pair at 50/50 composition and sweep the blockiness axis. The true Tg swings roughly 130 °C from alternating to blocky. The composition-weighted model draws a **flat horizontal line** across the entire sweep — one answer for a property that moves by 130 °C — while the sequence-aware model tracks the real curve. That flat line is the thesis.
 
