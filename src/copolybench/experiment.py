@@ -22,15 +22,20 @@ from polytools import GBMRegressor, group_split, random_split, regression_metric
 
 from .represent import REPRESENTATIONS, build_representation
 
-__all__ = ["run_ablation", "composition_only_floor"]
+__all__ = ["run_ablation", "sequence_effect_scale"]
 
 
-def composition_only_floor(df: pd.DataFrame) -> float:
-    """Lower bound on RMSE for any sequence-blind representation.
+def sequence_effect_scale(df: pd.DataFrame) -> float:
+    """Standard deviation of the planted sequence effect, ``std(tg - tg_fox)``.
 
-    A representation that is a function of composition only can, at best, predict
-    the Fox Tg for each composition. The residual it cannot touch is the sequence
-    effect ``tg - tg_fox``; its standard deviation is the achievable floor.
+    This is the *scale* of what sequence contributes -- a yardstick for the RMSE
+    table, **not** a lower bound for sequence-blind models. It is not a bound
+    because the pair sensitivity ``delta`` is (by design) learnable from monomer
+    structure: a sequence-blind model that knows the monomers can anticipate the
+    composition-conditional *mean* of the sequence effect and score below this
+    number. What no sequence-blind model can do is resolve *which* sequence a
+    given sample has -- that irreducible part is what separates the sequence-blind
+    representations from ``plus_sequence`` in the ablation.
     """
     return float((df["tg"] - df["tg_fox"]).std())
 
@@ -51,7 +56,7 @@ def run_ablation(
     """Train each representation under each split; return a tidy results frame."""
     y = df["tg"].to_numpy(dtype=float)
     splits = _splits(df, seed)
-    floor = composition_only_floor(df)
+    scale = sequence_effect_scale(df)
 
     rows = []
     for rep_name in REPRESENTATIONS:
@@ -68,6 +73,6 @@ def run_ablation(
                 "rmse": m["rmse"],
                 "mae": m["mae"],
                 "r2": m["r2"],
-                "sequence_blind_floor": floor,
+                "sequence_effect_scale": scale,
             })
     return pd.DataFrame(rows)

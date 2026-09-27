@@ -6,11 +6,12 @@
 Writes the results table and two figures:
 
 * ``ablation_rmse.png`` -- test RMSE per representation and split, with the
-  composition-only floor drawn in. The gap between the naive and sequence-aware
-  bars on the random split is the headline.
-* ``blindness.png`` -- the naive representation's residuals plotted against the
-  planted sequence effect. They line up, which is the mechanistic proof that what
-  a composition-only encoding gets wrong *is* the sequence it cannot see.
+  scale of the planted sequence effect drawn in as a yardstick. The gap between
+  the naive and sequence-aware bars on the random split is the headline.
+* ``blindness.png`` -- a blockiness sweep for one sequence-sensitive comonomer
+  pair at fixed composition: the true Tg swings ~130 C while the naive
+  composition-weighted model draws a flat line. Illustrative, not held-out: the
+  swept pair's other (f, chi) samples are in the training data.
 
 Controlled benchmark -- labelled as such. Swap in real copolymer data through the
 same record structure when you have it.
@@ -26,7 +27,7 @@ import pandas as pd
 from polytools import GBMRegressor, random_split, silence_rdkit
 
 from copolybench import generate_dataset
-from copolybench.experiment import composition_only_floor, run_ablation
+from copolybench.experiment import run_ablation, sequence_effect_scale
 from copolybench.represent import build_representation
 
 ORDER = ["composition_weighted", "monomers_composition",
@@ -50,10 +51,10 @@ def main() -> None:
         n_pairs=args.n_pairs, points_per_pair=args.points_per_pair,
         noise_c=args.noise, seed=args.seed,
     )
-    floor = composition_only_floor(df)
+    scale = sequence_effect_scale(df)
     print(f"Dataset: {len(df)} copolymers from {df.pair_id.nunique()} comonomer pairs")
-    print(f"Tg std {df.tg.std():.1f} C | sequence-effect std (composition-blind floor) "
-          f"{floor:.1f} C | label noise {args.noise} C")
+    print(f"Tg std {df.tg.std():.1f} C | planted sequence-effect std {scale:.1f} C "
+          f"| label noise {args.noise} C")
 
     res = run_ablation(df, seed=args.seed)
     res.to_csv(args.outdir / "ablation_results.csv", index=False)
@@ -75,7 +76,7 @@ def main() -> None:
           f"{rnd['monomers_composition']:.1f} to {rnd['plus_sequence']:.1f} C "
           f"({100 * (1 - rnd['plus_sequence'] / rnd['monomers_composition']):.0f}% lower); "
           f"the naive composition-weighted encoding ({rnd['composition_weighted']:.1f}) "
-          f"sits at the sequence-blind floor ({floor:.1f}).")
+          f"leaves error comparable to the full sequence-effect scale ({scale:.1f}).")
 
     if args.no_figures:
         return
@@ -93,8 +94,8 @@ def main() -> None:
     for k, s in enumerate(splits):
         ax.bar(x + k * w - 0.4 + w / 2, piv[s].values, w, label=s,
                color=cmap(k), edgecolor="white")
-    ax.axhline(floor, color="crimson", ls="--", lw=1.2,
-               label=f"composition-blind floor ({floor:.0f} C)")
+    ax.axhline(scale, color="crimson", ls="--", lw=1.2,
+               label=f"planted sequence-effect scale ({scale:.0f} C)")
     ax.set_xticks(x)
     ax.set_xticklabels([r.replace("_", "\n") for r in ORDER], fontsize=8)
     ax.set_ylabel("Test RMSE (C)")
@@ -148,7 +149,8 @@ def main() -> None:
     ax.set_xlabel("blockiness  chi   (alternating <-  0 random  -> blocky)")
     ax.set_ylabel("Tg (C)")
     ax.set_title(f"Same composition (f=0.5), varying sequence\n"
-                 f"{pair['name_a']} / {pair['name_b']}")
+                 f"{pair['name_a']} / {pair['name_b']} "
+                 f"(illustrative: pair seen in training)")
     ax.legend(fontsize=8)
     ax.grid(alpha=0.25)
     fig.tight_layout()

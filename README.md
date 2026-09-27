@@ -10,7 +10,7 @@ This repo measures exactly what that blindness costs, on ground truth where the 
 
 ![At one fixed composition, the true Tg swings ~130 °C from alternating to blocky. The naive composition-weighted representation predicts a flat line — it cannot see sequence. A representation given first-order sequence statistics tracks the truth.](assets/blindness.png)
 
-Same comonomers, same 50/50 composition. **Only the sequence changes.** The true glass-transition temperature moves by ~130 °C across the blockiness axis; the composition-weighted model — the field's default — returns one flat answer for all of it.
+Same comonomers, same 50/50 composition. **Only the sequence changes.** The true glass-transition temperature moves by ~130 °C across the blockiness axis; the composition-weighted model — the field's default — returns one flat answer for all of it. (This sweep is an illustration on a pair whose other samples appear in training; the held-out evidence is the table below.)
 
 ---
 
@@ -27,9 +27,9 @@ Four representations, the same gradient-boosting model, the same splits. Only th
 
 *Test RMSE, °C. Controlled synthetic benchmark — see below.*
 
-Read the `random` column. The naive composition-weighted encoding is stuck at **25.3 °C**, essentially the *sequence-blind floor* of 27 °C (the standard deviation of the planted sequence effect — the part no composition-only model can fit). Adding first-order sequence statistics — the AB dyad fraction, blockiness, mean run lengths — drops RMSE to **9.4 °C**, a 60% reduction, down toward the label-noise floor.
+Read the `random` column against the yardstick: the planted sequence effect has a standard deviation of **27 °C**, and the naive composition-weighted encoding leaves an error of the same size (**25.3 °C**) — it resolves essentially none of what sequence contributes. A sequence-blind model that at least knows the monomers does better (15.8 °C: the pair-specific sequence *sensitivity* is learnable from monomer structure, so it can anticipate the average sequence effect for a pair — though never which sequence a given sample has). Adding first-order sequence statistics — the AB dyad fraction, blockiness, mean run lengths — drops RMSE to **9.4 °C**, down toward the label-noise floor.
 
-![Test RMSE per representation and split, with the sequence-blind floor drawn in.](assets/ablation_rmse.png)
+![Test RMSE per representation and split, with the scale of the planted sequence effect drawn in as a yardstick.](assets/ablation_rmse.png)
 
 > 📄 **The full technical writeup** — the argument, the physics, and the nuances in article form — is in [`docs/writeup.md`](docs/writeup.md).
 
