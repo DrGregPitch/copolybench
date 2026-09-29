@@ -20,8 +20,9 @@ built to run.
    structure. A diagnostic: it isolates how far you get from the statistics alone,
    without knowing what the comonomers are.
 
-The prediction the benchmark tests: 1 and 2 are floored at the variance of the
-planted sequence effect; 3 breaks through it.
+The prediction the benchmark tests: 1 and 2 (sequence-blind) leave error on the
+scale of the planted sequence effect because they cannot resolve which sequence a
+sample has; 3 breaks through it.
 """
 
 from __future__ import annotations

@@ -10,9 +10,11 @@ different questions:
   combinations it has never seen. This is the honest test, and the one where a
   representation that merely memorised per-pair behaviour is exposed.
 
-The composition-only floor is reported alongside: the standard deviation of the
-planted sequence effect (``tg - tg_fox``) is, by construction, a lower bound on the
-RMSE any sequence-blind representation can achieve.
+The scale of the planted sequence effect (std of ``tg - tg_fox``) is reported
+alongside as a yardstick -- NOT a lower bound. Because each pair's sequence
+sensitivity is learnable from monomer structure, a sequence-blind model that knows
+the monomers can score below it (see ``sequence_effect_scale``); what no
+sequence-blind model can resolve is which sequence a given sample has.
 """
 
 from __future__ import annotations
