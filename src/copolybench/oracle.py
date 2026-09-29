@@ -106,9 +106,10 @@ def sequence_effect(
 ) -> float:
     """Tg shift attributable purely to sequence: Johnston(f, chi) - Fox(f).
 
-    This is the number a composition-only representation is structurally blind to.
-    Its spread across a dataset is the error floor such a representation cannot
-    beat, and recovering it is the whole point of a sequence-aware encoding.
+    This is the number a composition-only representation cannot resolve per-sample
+    (it cannot tell which sequence a given copolymer has). Its spread sets the
+    SCALE of the sequence contribution -- a yardstick, not a strict floor, since a
+    monomer-aware model can still anticipate the composition-conditional mean.
     """
     dyads = dyad_fractions(f, chi)
     return tg_johnston(tg_a_c, tg_b_c, dyads, delta) - tg_fox(tg_a_c, tg_b_c, f)
